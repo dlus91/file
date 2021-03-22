@@ -176,8 +176,8 @@
 					frequency  	"Aperiodic"
 					synchronization 	"Return"
 					dir        	"ToClientFromSupplier"
-					sequence   	"1.4.7.1.2.9.2"
-					ordinal    	34
+					sequence   	"1.4.7.1.2.8.3"
+					ordinal    	38
 					quidu      	"000000000000"
 					creation   	FALSE))))
 			class      	"Use Case View::客户"
@@ -220,7 +220,7 @@
 					ordinal    	6
 					quidu      	"000000000000"
 					creation   	FALSE)
-				    (object Message "返回刷新后外部最高价"
+				    (object Message "返回刷新后外部最高价与id"
 					quid       	"5F840E3003E7"
 					frequency  	"Aperiodic"
 					synchronization 	"Return"
@@ -357,13 +357,22 @@
 					ordinal    	17
 					quidu      	"000000000000"
 					creation   	FALSE)
-				    (object Message "依次遍历每个用户的代理出价"
+				    (object Message "如果步长大于用户出价，则遍历出用户的所有代理出价"
 					quid       	"5F8446910030"
 					frequency  	"Aperiodic"
 					synchronization 	"Simple"
 					dir        	"FromClientToSupplier"
-					sequence   	"1.4.7.1.2.9"
+					sequence   	"1.4.7.1.2.8"
 					ordinal    	32
+					quidu      	"000000000000"
+					creation   	FALSE)
+				    (object Message "提交事务到数据库"
+					quid       	"60474117039D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.4.7.1.2.8.2"
+					ordinal    	37
 					quidu      	"000000000000"
 					creation   	FALSE)))
 			    (object Link
@@ -377,15 +386,6 @@
 					synchronization 	"Simple"
 					dir        	"FromClientToSupplier"
 					sequence   	"1.4.7.1.2.7"
-					ordinal    	30
-					quidu      	"000000000000"
-					creation   	FALSE)
-				    (object Message "获取该域名所有用户代理出价用户，并且值大于实际价格，按时间降序和"
-					quid       	"5F840139006D"
-					frequency  	"Aperiodic"
-					synchronization 	"Simple"
-					dir        	"FromClientToSupplier"
-					sequence   	"1.4.7.1.2.8"
 					ordinal    	31
 					quidu      	"000000000000"
 					creation   	FALSE)
@@ -395,8 +395,17 @@
 					frequency  	"Aperiodic"
 					synchronization 	"Simple"
 					dir        	"FromClientToSupplier"
-					sequence   	"1.4.7.1.2.9.1"
+					sequence   	"1.4.7.1.2.8.1"
 					ordinal    	33
+					quidu      	"000000000000"
+					creation   	FALSE)
+				    (object Message "返回"
+					quid       	"604721A60325"
+					frequency  	"Aperiodic"
+					synchronization 	"Return"
+					dir        	"ToClientFromSupplier"
+					sequence   	"1.4.7.1.2.8.1.2"
+					ordinal    	35
 					quidu      	"000000000000"
 					creation   	FALSE)))
 			    (object Link
@@ -411,6 +420,15 @@
 					dir        	"FromClientToSupplier"
 					sequence   	"1.4.7.1.2.6"
 					ordinal    	29
+					quidu      	"000000000000"
+					creation   	FALSE)
+				    (object Message "返回并跳过代理出价环节"
+					quid       	"6047212A00F9"
+					frequency  	"Aperiodic"
+					synchronization 	"Return"
+					dir        	"ToClientFromSupplier"
+					sequence   	"1.4.7.1.2.6.2"
+					ordinal    	36
 					quidu      	"000000000000"
 					creation   	FALSE)))
 			    (object Link
@@ -449,7 +467,11 @@
 					sequence   	"1.4.7.1.2.2"
 					ordinal    	21
 					quidu      	"000000000000"
-					creation   	FALSE))))
+					creation   	FALSE)))
+			    (object Link
+				quid       	"60472099018D"
+				supplier   	"历史出价数据"
+				quidu      	"5F84454D02A2"))
 			persistence 	"Transient"
 			creationObj 	FALSE
 			multi      	FALSE)
@@ -484,11 +506,41 @@
 			multi      	FALSE)
 		    (object Object "代理出价"
 			quid       	"5F83F5C30370"
+			collaborators 	(list link_list
+			    (object Link
+				quid       	"6047210D0129"
+				supplier   	"历史出价数据"
+				quidu      	"5F84454D02A2"
+				messages   	(list Messages
+				    (object Message "将最高价的一条代理出价录入，并标记为代理出价"
+					quid       	"6047210D012A"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.4.7.1.2.8.1.1"
+					ordinal    	34
+					quidu      	"000000000000"
+					creation   	FALSE))))
 			persistence 	"Transient"
 			creationObj 	FALSE
 			multi      	FALSE)
 		    (object Object "本地出价"
 			quid       	"5F83FBB3037B"
+			collaborators 	(list link_list
+			    (object Link
+				quid       	"604720E2036E"
+				supplier   	"历史出价数据"
+				quidu      	"5F84454D02A2"
+				messages   	(list Messages
+				    (object Message "将本地出价录入，并标记为本地出价"
+					quid       	"604720E2036F"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.4.7.1.2.6.1"
+					ordinal    	30
+					quidu      	"000000000000"
+					creation   	FALSE))))
 			persistence 	"Transient"
 			creationObj 	FALSE
 			multi      	FALSE)
@@ -552,7 +604,7 @@
 			fill_color 	13434879
 			quidu      	"5F83ECC6004A"
 			width      	120
-			height     	4562
+			height     	4998
 			icon_height 	162
 			icon_width 	120
 			icon_y_offset 	0
@@ -600,14 +652,14 @@
 			    y_coord    	0
 			    Nested     	FALSE)
 			Focus_Of_Control 	(object Focus_Of_Control "" @9
-			    location   	(180, 3830)
+			    location   	(180, 3799)
 			    line_color 	3342489
 			    InterObjView 	@2
 			    height     	90
 			    y_coord    	0
 			    Nested     	FALSE)
 			Focus_Of_Control 	(object Focus_Of_Control "" @10
-			    location   	(180, 4607)
+			    location   	(180, 5043)
 			    line_color 	3342489
 			    InterObjView 	@2
 			    height     	90
@@ -638,7 +690,7 @@
 			fill_color 	13434879
 			quidu      	"5F83ED760216"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
@@ -724,8 +776,8 @@
 			    location   	(540, 2749)
 			    line_color 	3342489
 			    InterObjView 	@11
-			    height     	1713
-			    y_coord    	1623
+			    height     	1627
+			    y_coord    	1537
 			    Nested     	TRUE)
 			Focus_Of_Control 	(object Focus_Of_Control "" @24
 			    location   	(540, 3119)
@@ -749,13 +801,34 @@
 			    y_coord    	-89
 			    Nested     	TRUE)
 			Focus_Of_Control 	(object Focus_Of_Control "" @27
-			    location   	(540, 4397)
+			    location   	(540, 4311)
 			    line_color 	3342489
 			    InterObjView 	@11
-			    height     	210
-			    y_coord    	120
+			    height     	732
+			    y_coord    	642
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @28
+			    location   	(540, 4638)
+			    line_color 	3342489
+			    InterObjView 	@11
+			    height     	1
+			    y_coord    	-89
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @29
+			    location   	(540, 4798)
+			    line_color 	3342489
+			    InterObjView 	@11
+			    height     	1
+			    y_coord    	-89
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @30
+			    location   	(540, 4938)
+			    line_color 	3342489
+			    InterObjView 	@11
+			    height     	90
+			    y_coord    	0
 			    Nested     	TRUE))
-		    (object InterObjView "预定域名" @28
+		    (object InterObjView "预定域名" @31
 			location   	(900, 225)
 			font       	(object Font
 			    size       	10
@@ -767,7 +840,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@28
+			    Parent_View 	@31
 			    location   	(900, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -780,47 +853,47 @@
 			fill_color 	13434879
 			quidu      	"5F83EDE70283"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
 			annotation 	1
-			Focus_Of_Control 	(object Focus_Of_Control "" @29
+			Focus_Of_Control 	(object Focus_Of_Control "" @32
 			    location   	(900, 1062)
 			    line_color 	3342489
-			    InterObjView 	@28
+			    InterObjView 	@31
 			    height     	235
 			    y_coord    	145
 			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @30
+			Focus_Of_Control 	(object Focus_Of_Control "" @33
 			    location   	(900, 1192)
 			    line_color 	3342489
-			    InterObjView 	@28
+			    InterObjView 	@31
 			    height     	90
 			    y_coord    	0
 			    Nested     	TRUE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @31
+			Focus_Of_Control 	(object Focus_Of_Control "" @34
 			    location   	(900, 2007)
 			    line_color 	3342489
-			    InterObjView 	@28
+			    InterObjView 	@31
 			    height     	117
 			    y_coord    	27
 			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @32
+			Focus_Of_Control 	(object Focus_Of_Control "" @35
 			    location   	(900, 3459)
 			    line_color 	3342489
-			    InterObjView 	@28
+			    InterObjView 	@31
 			    height     	195
 			    y_coord    	105
 			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @33
+			Focus_Of_Control 	(object Focus_Of_Control "" @36
 			    location   	(900, 3589)
 			    line_color 	3342489
-			    InterObjView 	@28
-			    height     	195
-			    y_coord    	105
+			    InterObjView 	@31
+			    height     	105
+			    y_coord    	15
 			    Nested     	TRUE))
-		    (object InterObjView "用户模块" @34
+		    (object InterObjView "用户模块" @37
 			location   	(1280, 225)
 			font       	(object Font
 			    size       	10
@@ -832,7 +905,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@34
+			    Parent_View 	@37
 			    location   	(1280, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -845,26 +918,26 @@
 			fill_color 	13434879
 			quidu      	"5F83FE2F02F5"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
 			annotation 	1
-			Focus_Of_Control 	(object Focus_Of_Control "" @35
+			Focus_Of_Control 	(object Focus_Of_Control "" @38
 			    location   	(1280, 452)
 			    line_color 	3342489
-			    InterObjView 	@34
+			    InterObjView 	@37
 			    height     	90
 			    y_coord    	0
 			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @36
+			Focus_Of_Control 	(object Focus_Of_Control "" @39
 			    location   	(1280, 2858)
 			    line_color 	3342489
-			    InterObjView 	@34
+			    InterObjView 	@37
 			    height     	90
 			    y_coord    	0
 			    Nested     	FALSE))
-		    (object InterObjView "分销商模块" @37
+		    (object InterObjView "分销商模块" @40
 			location   	(1648, 225)
 			font       	(object Font
 			    size       	10
@@ -876,7 +949,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@37
+			    Parent_View 	@40
 			    location   	(1648, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -889,19 +962,19 @@
 			fill_color 	13434879
 			quidu      	"5F83FF5C0286"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
 			annotation 	1
-			Focus_Of_Control 	(object Focus_Of_Control "" @38
+			Focus_Of_Control 	(object Focus_Of_Control "" @41
 			    location   	(1648, 2989)
 			    line_color 	3342489
-			    InterObjView 	@37
+			    InterObjView 	@40
 			    height     	90
 			    y_coord    	0
 			    Nested     	FALSE))
-		    (object InterObjView "本地出价" @39
+		    (object InterObjView "本地出价" @42
 			location   	(2013, 225)
 			font       	(object Font
 			    size       	10
@@ -913,7 +986,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@39
+			    Parent_View 	@42
 			    location   	(2013, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -926,19 +999,19 @@
 			fill_color 	13434879
 			quidu      	"5F83FBB3037B"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
 			annotation 	1
-			Focus_Of_Control 	(object Focus_Of_Control "" @40
-			    location   	(2013, 3937)
+			Focus_Of_Control 	(object Focus_Of_Control "" @43
+			    location   	(2013, 3904)
 			    line_color 	3342489
-			    InterObjView 	@39
-			    height     	90
-			    y_coord    	0
+			    InterObjView 	@42
+			    height     	894
+			    y_coord    	804
 			    Nested     	FALSE))
-		    (object InterObjView "代理出价" @41
+		    (object InterObjView "代理出价" @44
 			location   	(2373, 225)
 			font       	(object Font
 			    size       	10
@@ -950,7 +1023,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@41
+			    Parent_View 	@44
 			    location   	(2373, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -963,33 +1036,26 @@
 			fill_color 	13434879
 			quidu      	"5F83F5C30370"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
 			annotation 	1
-			Focus_Of_Control 	(object Focus_Of_Control "" @42
-			    location   	(2373, 4132)
+			Focus_Of_Control 	(object Focus_Of_Control "" @45
+			    location   	(2373, 4168)
 			    line_color 	3342489
-			    InterObjView 	@41
+			    InterObjView 	@44
 			    height     	90
 			    y_coord    	0
 			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @43
-			    location   	(2373, 4267)
+			Focus_Of_Control 	(object Focus_Of_Control "" @46
+			    location   	(2373, 4416)
 			    line_color 	3342489
-			    InterObjView 	@41
-			    height     	90
-			    y_coord    	0
-			    Nested     	FALSE)
-			Focus_Of_Control 	(object Focus_Of_Control "" @44
-			    location   	(2373, 4502)
-			    line_color 	3342489
-			    InterObjView 	@41
-			    height     	90
-			    y_coord    	0
+			    InterObjView 	@44
+			    height     	222
+			    y_coord    	132
 			    Nested     	FALSE))
-		    (object InterObjView "历史出价数据" @45
+		    (object InterObjView "历史出价数据" @47
 			location   	(2733, 225)
 			font       	(object Font
 			    size       	10
@@ -1001,7 +1067,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@45
+			    Parent_View 	@47
 			    location   	(2733, 225)
 			    fill_color 	13434879
 			    anchor_loc 	1
@@ -1014,12 +1080,26 @@
 			fill_color 	13434879
 			quidu      	"5F84454D02A2"
 			width      	300
-			height     	4562
+			height     	4998
 			icon_height 	0
 			icon_width 	0
 			icon_y_offset 	0
-			annotation 	1)
-		    (object InterMessView "申请带该域名出价" @46
+			annotation 	1
+			Focus_Of_Control 	(object Focus_Of_Control "" @48
+			    location   	(2733, 4009)
+			    line_color 	3342489
+			    InterObjView 	@47
+			    height     	90
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @49
+			    location   	(2733, 4521)
+			    line_color 	3342489
+			    InterObjView 	@47
+			    height     	90
+			    y_coord    	0
+			    Nested     	FALSE))
+		    (object InterMessView "申请带该域名出价" @50
 			location   	(0, 347)
 			font       	(object Font
 			    size       	10
@@ -1030,8 +1110,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @47
-			    Parent_View 	@46
+			label      	(object SegLabel @51
+			    Parent_View 	@50
 			    location   	(359, 303)
 			    font       	(object Font
 				size       	10
@@ -1045,7 +1125,7 @@
 			    quidu      	"5F83EDA80119"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	392
+			    max_width  	374
 			    justify    	0
 			    label      	"申请带该域名出价"
 			    pctDist    	0.500000
@@ -1059,7 +1139,7 @@
 			origin     	(195, 347)
 			terminus   	(524, 347)
 			ordinal    	0)
-		    (object InterMessView "提取外部最高价+加价步长，执行预定竞价" @48
+		    (object InterMessView "提取外部最高价+加价步长，执行预定竞价" @52
 			location   	(0, 3459)
 			font       	(object Font
 			    size       	10
@@ -1070,8 +1150,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @49
-			    Parent_View 	@48
+			label      	(object SegLabel @53
+			    Parent_View 	@52
 			    location   	(719, 3415)
 			    font       	(object Font
 				size       	10
@@ -1093,13 +1173,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@28
+			supplier   	@31
 			Focus_Src  	@23
-			Focus_Entry 	@32
+			Focus_Entry 	@35
 			origin     	(555, 3459)
 			terminus   	(884, 3459)
 			ordinal    	25)
-		    (object InterMessView "返回是否" @50
+		    (object InterMessView "返回是否" @54
 			location   	(0, 2124)
 			font       	(object Font
 			    size       	10
@@ -1110,8 +1190,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @51
-			    Parent_View 	@50
+			label      	(object SegLabel @55
+			    Parent_View 	@54
 			    location   	(720, 2080)
 			    font       	(object Font
 				size       	10
@@ -1132,14 +1212,14 @@
 			    height     	45
 			    orientation 	1)
 			line_color 	3342489
-			client     	@28
+			client     	@31
 			supplier   	@11
-			Focus_Src  	@31
+			Focus_Src  	@34
 			Focus_Entry 	@19
 			origin     	(884, 2124)
 			terminus   	(556, 2124)
 			ordinal    	14)
-		    (object SelfMessView "如果参与预定则闯入费为0，如果未参与需要50元闯入费" @52
+		    (object SelfMessView "如果参与预定则闯入费为0，如果未参与需要50元闯入费" @56
 			location   	(0, 2229)
 			font       	(object Font
 			    size       	10
@@ -1150,8 +1230,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @53
-			    Parent_View 	@52
+			label      	(object SegLabel @57
+			    Parent_View 	@56
 			    location   	(650, 2203)
 			    font       	(object Font
 				size       	10
@@ -1179,7 +1259,7 @@
 			origin     	(556, 2229)
 			terminus   	(706, 2229)
 			ordinal    	15)
-		    (object SelfMessView "根据外部最高价和本地最高价获取当前最高价，并记录外部/本地和用户id" @54
+		    (object SelfMessView "根据外部最高价和本地最高价获取当前最高价，并记录外部/本地和用户id" @58
 			location   	(0, 932)
 			font       	(object Font
 			    size       	10
@@ -1190,8 +1270,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @55
-			    Parent_View 	@54
+			label      	(object SegLabel @59
+			    Parent_View 	@58
 			    location   	(631, 889)
 			    font       	(object Font
 				size       	10
@@ -1219,7 +1299,7 @@
 			origin     	(556, 932)
 			terminus   	(706, 932)
 			ordinal    	5)
-		    (object SelfMessView "根据当前价格计算该域名续费价" @56
+		    (object SelfMessView "根据当前价格计算该域名续费价" @60
 			location   	(0, 2359)
 			font       	(object Font
 			    size       	10
@@ -1230,8 +1310,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @57
-			    Parent_View 	@56
+			label      	(object SegLabel @61
+			    Parent_View 	@60
 			    location   	(631, 2315)
 			    font       	(object Font
 				size       	10
@@ -1259,7 +1339,7 @@
 			origin     	(556, 2359)
 			terminus   	(706, 2359)
 			ordinal    	16)
-		    (object SelfMessView "根据当前价格计算该域名加价步长" @58
+		    (object SelfMessView "根据当前价格计算该域名加价步长" @62
 			location   	(0, 2724)
 			font       	(object Font
 			    size       	10
@@ -1270,8 +1350,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @59
-			    Parent_View 	@58
+			label      	(object SegLabel @63
+			    Parent_View 	@62
 			    location   	(631, 2680)
 			    font       	(object Font
 				size       	10
@@ -1299,8 +1379,8 @@
 			origin     	(556, 2724)
 			terminus   	(706, 2724)
 			ordinal    	19)
-		    (object InterMessView "如果该加价步长等于用户出价，则录入一条数据" @60
-			location   	(0, 3937)
+		    (object InterMessView "如果该加价步长等于用户出价，则录入一条数据" @64
+			location   	(0, 3904)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -1310,9 +1390,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @61
-			    Parent_View 	@60
-			    location   	(1276, 3982)
+			label      	(object SegLabel @65
+			    Parent_View 	@64
+			    location   	(1276, 3949)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -1333,14 +1413,14 @@
 			    orientation 	1)
 			line_color 	3342489
 			client     	@11
-			supplier   	@39
+			supplier   	@42
 			Focus_Src  	@23
-			Focus_Entry 	@40
-			origin     	(555, 3937)
-			terminus   	(1997, 3937)
+			Focus_Entry 	@43
+			origin     	(555, 3904)
+			terminus   	(1997, 3904)
 			ordinal    	29)
-		    (object InterMessView "如果该加价步长小于用户出价，则录入一条数据" @62
-			location   	(0, 4132)
+		    (object InterMessView "如果该加价步长小于用户出价，则录入一条数据" @66
+			location   	(0, 4168)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -1350,9 +1430,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @63
-			    Parent_View 	@62
-			    location   	(1456, 4088)
+			label      	(object SegLabel @67
+			    Parent_View 	@66
+			    location   	(1456, 4124)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -1373,53 +1453,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@41
+			supplier   	@44
 			Focus_Src  	@23
-			Focus_Entry 	@42
-			origin     	(555, 4132)
-			terminus   	(2357, 4132)
-			ordinal    	30)
-		    (object InterMessView "获取该域名所有用户代理出价用户，并且值大于实际价格，按时间降序和" @64
-			location   	(0, 4267)
-			font       	(object Font
-			    size       	10
-			    face       	"Arial"
-			    bold       	FALSE
-			    italics    	FALSE
-			    underline  	FALSE
-			    strike     	FALSE
-			    color      	0
-			    default_color 	TRUE)
-			label      	(object SegLabel @65
-			    Parent_View 	@64
-			    location   	(1456, 4223)
-			    font       	(object Font
-				size       	10
-				face       	"Arial"
-				bold       	FALSE
-				italics    	FALSE
-				underline  	FALSE
-				strike     	FALSE
-				color      	0
-				default_color 	TRUE)
-			    quidu      	"5F840139006D"
-			    anchor_loc 	1
-			    nlines     	1
-			    max_width  	1360
-			    justify    	0
-			    label      	"获取该域名所有用户代理出价用户，并且值大于实际价格，按时间降序和"
-			    pctDist    	0.500000
-			    height     	45
-			    orientation 	0)
-			line_color 	3342489
-			client     	@11
-			supplier   	@41
-			Focus_Src  	@23
-			Focus_Entry 	@43
-			origin     	(555, 4267)
-			terminus   	(2357, 4267)
+			Focus_Entry 	@45
+			origin     	(555, 4168)
+			terminus   	(2357, 4168)
 			ordinal    	31)
-		    (object SelfMessView "根据该域名获取竞价中该域名的信息" @66
+		    (object SelfMessView "根据该域名获取竞价中该域名的信息" @68
 			location   	(0, 792)
 			font       	(object Font
 			    size       	10
@@ -1430,8 +1470,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @67
-			    Parent_View 	@66
+			label      	(object SegLabel @69
+			    Parent_View 	@68
 			    location   	(631, 748)
 			    font       	(object Font
 				size       	10
@@ -1459,7 +1499,7 @@
 			origin     	(556, 792)
 			terminus   	(706, 792)
 			ordinal    	4)
-		    (object InterMessView "刷新外部价格" @68
+		    (object InterMessView "刷新外部价格" @70
 			location   	(0, 1062)
 			font       	(object Font
 			    size       	10
@@ -1470,8 +1510,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @69
-			    Parent_View 	@68
+			label      	(object SegLabel @71
+			    Parent_View 	@70
 			    location   	(719, 1018)
 			    font       	(object Font
 				size       	10
@@ -1485,7 +1525,7 @@
 			    quidu      	"5F840D6D0207"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	310
+			    max_width  	283
 			    justify    	0
 			    label      	"刷新外部价格"
 			    pctDist    	0.500000
@@ -1493,13 +1533,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@28
+			supplier   	@31
 			Focus_Src  	@15
-			Focus_Entry 	@29
+			Focus_Entry 	@32
 			origin     	(555, 1062)
 			terminus   	(884, 1062)
 			ordinal    	6)
-		    (object InterMessView "否，外部价格已更新" @70
+		    (object InterMessView "否，外部价格已更新" @72
 			location   	(0, 1532)
 			font       	(object Font
 			    size       	10
@@ -1510,8 +1550,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @71
-			    Parent_View 	@70
+			label      	(object SegLabel @73
+			    Parent_View 	@72
 			    location   	(360, 1488)
 			    font       	(object Font
 				size       	10
@@ -1539,7 +1579,7 @@
 			origin     	(524, 1532)
 			terminus   	(196, 1532)
 			ordinal    	10)
-		    (object SelfMessView "刷新后外部价格是否等于当前外部最高价格" @72
+		    (object SelfMessView "刷新后外部价格是否等于当前外部最高价格" @74
 			location   	(0, 1402)
 			font       	(object Font
 			    size       	10
@@ -1550,8 +1590,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @73
-			    Parent_View 	@72
+			label      	(object SegLabel @75
+			    Parent_View 	@74
 			    location   	(631, 1358)
 			    font       	(object Font
 				size       	10
@@ -1579,7 +1619,7 @@
 			origin     	(556, 1402)
 			terminus   	(706, 1402)
 			ordinal    	9)
-		    (object InterMessView "返回刷新后外部最高价" @74
+		    (object InterMessView "返回刷新后外部最高价与id" @76
 			location   	(0, 1297)
 			font       	(object Font
 			    size       	10
@@ -1590,8 +1630,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @75
-			    Parent_View 	@74
+			label      	(object SegLabel @77
+			    Parent_View 	@76
 			    location   	(720, 1253)
 			    font       	(object Font
 				size       	10
@@ -1605,21 +1645,21 @@
 			    quidu      	"5F840E3003E7"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	480
+			    max_width  	516
 			    justify    	0
-			    label      	"返回刷新后外部最高价"
+			    label      	"返回刷新后外部最高价与id"
 			    pctDist    	0.500000
 			    height     	45
 			    orientation 	1)
 			line_color 	3342489
-			client     	@28
+			client     	@31
 			supplier   	@11
-			Focus_Src  	@29
+			Focus_Src  	@32
 			Focus_Entry 	@16
 			origin     	(884, 1297)
 			terminus   	(556, 1297)
 			ordinal    	8)
-		    (object SelfMessView "调用第三方接口刷新价格，并重走预定刷新逻辑" @76
+		    (object SelfMessView "调用第三方接口刷新价格，并重走预定刷新逻辑" @78
 			location   	(0, 1167)
 			font       	(object Font
 			    size       	10
@@ -1630,8 +1670,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @77
-			    Parent_View 	@76
+			label      	(object SegLabel @79
+			    Parent_View 	@78
 			    location   	(991, 1123)
 			    font       	(object Font
 				size       	10
@@ -1645,21 +1685,21 @@
 			    quidu      	"5F840E7A03A3"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	920
+			    max_width  	883
 			    justify    	0
 			    label      	"调用第三方接口刷新价格，并重走预定刷新逻辑"
 			    pctDist    	0.500000
 			    height     	45
 			    orientation 	0)
 			line_color 	3342489
-			client     	@28
-			supplier   	@28
-			Focus_Src  	@29
-			Focus_Entry 	@30
+			client     	@31
+			supplier   	@31
+			Focus_Src  	@32
+			Focus_Entry 	@33
 			origin     	(916, 1167)
 			terminus   	(1066, 1167)
 			ordinal    	7)
-		    (object InterMessView "该客户是否参与该域名预定" @78
+		    (object InterMessView "该客户是否参与该域名预定" @80
 			location   	(0, 2007)
 			font       	(object Font
 			    size       	10
@@ -1670,8 +1710,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @79
-			    Parent_View 	@78
+			label      	(object SegLabel @81
+			    Parent_View 	@80
 			    location   	(718, 1961)
 			    font       	(object Font
 				size       	10
@@ -1693,13 +1733,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@28
+			supplier   	@31
 			Focus_Src  	@15
-			Focus_Entry 	@31
+			Focus_Entry 	@34
 			origin     	(555, 2007)
 			terminus   	(884, 2007)
 			ordinal    	13)
-		    (object SelfMessView "调用第三方接口竞价，并等待是否竞价成功并刷新该域名预定信息" @80
+		    (object SelfMessView "调用第三方接口竞价，并等待是否竞价成功并刷新该域名预定信息" @82
 			location   	(0, 3564)
 			font       	(object Font
 			    size       	10
@@ -1710,8 +1750,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @81
-			    Parent_View 	@80
+			label      	(object SegLabel @83
+			    Parent_View 	@82
 			    location   	(1693, 3579)
 			    font       	(object Font
 				size       	10
@@ -1725,21 +1765,21 @@
 			    quidu      	"5F84100301F4"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	1240
+			    max_width  	1225
 			    justify    	0
 			    label      	"调用第三方接口竞价，并等待是否竞价成功并刷新该域名预定信息"
 			    pctDist    	5.186666
 			    height     	15
 			    orientation 	1)
 			line_color 	3342489
-			client     	@28
-			supplier   	@28
-			Focus_Src  	@32
-			Focus_Entry 	@33
+			client     	@31
+			supplier   	@31
+			Focus_Src  	@35
+			Focus_Entry 	@36
 			origin     	(916, 3564)
 			terminus   	(1066, 3564)
 			ordinal    	26)
-		    (object InterMessView "获取用户信息" @82
+		    (object InterMessView "获取用户信息" @84
 			location   	(0, 452)
 			font       	(object Font
 			    size       	10
@@ -1750,8 +1790,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @83
-			    Parent_View 	@82
+			label      	(object SegLabel @85
+			    Parent_View 	@84
 			    location   	(909, 408)
 			    font       	(object Font
 				size       	10
@@ -1773,13 +1813,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@34
+			supplier   	@37
 			Focus_Src  	@12
-			Focus_Entry 	@35
+			Focus_Entry 	@38
 			origin     	(555, 452)
 			terminus   	(1264, 452)
 			ordinal    	1)
-		    (object SelfMessView "校验余额是否足够（并非校验真实价格）" @84
+		    (object SelfMessView "校验余额是否足够（并非校验真实价格）" @86
 			location   	(0, 557)
 			font       	(object Font
 			    size       	10
@@ -1790,8 +1830,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @85
-			    Parent_View 	@84
+			label      	(object SegLabel @87
+			    Parent_View 	@86
 			    location   	(631, 513)
 			    font       	(object Font
 				size       	10
@@ -1819,7 +1859,7 @@
 			origin     	(556, 557)
 			terminus   	(706, 557)
 			ordinal    	2)
-		    (object InterMessView "余额不足" @86
+		    (object InterMessView "余额不足" @88
 			location   	(0, 687)
 			font       	(object Font
 			    size       	10
@@ -1830,8 +1870,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @87
-			    Parent_View 	@86
+			label      	(object SegLabel @89
+			    Parent_View 	@88
 			    location   	(360, 643)
 			    font       	(object Font
 				size       	10
@@ -1859,7 +1899,7 @@
 			origin     	(524, 687)
 			terminus   	(196, 687)
 			ordinal    	3)
-		    (object InterMessView "竞价是否成功" @88
+		    (object InterMessView "竞价是否成功" @90
 			location   	(0, 3694)
 			font       	(object Font
 			    size       	10
@@ -1870,8 +1910,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @89
-			    Parent_View 	@88
+			label      	(object SegLabel @91
+			    Parent_View 	@90
 			    location   	(720, 3739)
 			    font       	(object Font
 				size       	10
@@ -1892,15 +1932,15 @@
 			    height     	45
 			    orientation 	0)
 			line_color 	3342489
-			client     	@28
+			client     	@31
 			supplier   	@11
-			Focus_Src  	@33
+			Focus_Src  	@36
 			Focus_Entry 	@26
 			origin     	(884, 3694)
 			terminus   	(556, 3694)
 			ordinal    	27)
-		    (object InterMessView "竞价失败" @90
-			location   	(0, 3830)
+		    (object InterMessView "竞价失败" @92
+			location   	(0, 3799)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -1910,9 +1950,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @91
-			    Parent_View 	@90
-			    location   	(360, 3786)
+			label      	(object SegLabel @93
+			    Parent_View 	@92
+			    location   	(360, 3755)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -1936,10 +1976,10 @@
 			supplier   	@2
 			Focus_Src  	@23
 			Focus_Entry 	@9
-			origin     	(524, 3830)
-			terminus   	(196, 3830)
+			origin     	(524, 3799)
+			terminus   	(196, 3799)
 			ordinal    	28)
-		    (object SelfMessView "根据当前价格进行加价规则累加" @92
+		    (object SelfMessView "根据当前价格进行加价规则累加" @94
 			location   	(0, 3094)
 			font       	(object Font
 			    size       	10
@@ -1950,8 +1990,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @93
-			    Parent_View 	@92
+			label      	(object SegLabel @95
+			    Parent_View 	@94
 			    location   	(1043, 3111)
 			    font       	(object Font
 				size       	10
@@ -1979,7 +2019,7 @@
 			origin     	(556, 3094)
 			terminus   	(706, 3094)
 			ordinal    	22)
-		    (object InterMessView "根据用户等级获取分销商的加价规则（主模块对分销商的规则和分销商对分销商子用户规则和普通用户规则）" @94
+		    (object InterMessView "根据用户等级获取分销商的加价规则（主模块对分销商的规则和分销商对分销商子用户规则和普通用户规则）" @96
 			location   	(0, 2989)
 			font       	(object Font
 			    size       	10
@@ -1990,8 +2030,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @95
-			    Parent_View 	@94
+			label      	(object SegLabel @97
+			    Parent_View 	@96
 			    location   	(1093, 2945)
 			    font       	(object Font
 				size       	10
@@ -2013,13 +2053,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@37
+			supplier   	@40
 			Focus_Src  	@23
-			Focus_Entry 	@38
+			Focus_Entry 	@41
 			origin     	(555, 2989)
 			terminus   	(1632, 2989)
 			ordinal    	21)
-		    (object InterMessView "获取该用户的等级（分销商，分销商用户，一般用户）" @96
+		    (object InterMessView "获取该用户的等级（分销商，分销商用户，一般用户）" @98
 			location   	(0, 2858)
 			font       	(object Font
 			    size       	10
@@ -2030,8 +2070,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @97
-			    Parent_View 	@96
+			label      	(object SegLabel @99
+			    Parent_View 	@98
 			    location   	(909, 2814)
 			    font       	(object Font
 				size       	10
@@ -2053,13 +2093,13 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@34
+			supplier   	@37
 			Focus_Src  	@23
-			Focus_Entry 	@36
+			Focus_Entry 	@39
 			origin     	(555, 2858)
 			terminus   	(1264, 2858)
 			ordinal    	20)
-		    (object SelfMessView "用计算出来的真实价格与当前余额进行校验" @98
+		    (object SelfMessView "用计算出来的真实价格与当前余额进行校验" @100
 			location   	(0, 3224)
 			font       	(object Font
 			    size       	10
@@ -2070,8 +2110,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @99
-			    Parent_View 	@98
+			label      	(object SegLabel @101
+			    Parent_View 	@100
 			    location   	(631, 3180)
 			    font       	(object Font
 				size       	10
@@ -2099,7 +2139,7 @@
 			origin     	(556, 3224)
 			terminus   	(706, 3224)
 			ordinal    	23)
-		    (object InterMessView "如果小于，返回余额不足" @100
+		    (object InterMessView "如果小于，返回余额不足" @102
 			location   	(0, 3354)
 			font       	(object Font
 			    size       	10
@@ -2110,8 +2150,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @101
-			    Parent_View 	@100
+			label      	(object SegLabel @103
+			    Parent_View 	@102
 			    location   	(360, 3310)
 			    font       	(object Font
 				size       	10
@@ -2139,7 +2179,7 @@
 			origin     	(524, 3354)
 			terminus   	(196, 3354)
 			ordinal    	24)
-		    (object SelfMessView "如果最高价的用户id为自己，则不能继续出价" @102
+		    (object SelfMessView "如果最高价的用户id为自己，则不能继续出价" @104
 			location   	(0, 1698)
 			font       	(object Font
 			    size       	10
@@ -2150,8 +2190,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @103
-			    Parent_View 	@102
+			label      	(object SegLabel @105
+			    Parent_View 	@104
 			    location   	(631, 1654)
 			    font       	(object Font
 				size       	10
@@ -2179,7 +2219,7 @@
 			origin     	(556, 1698)
 			terminus   	(706, 1698)
 			ordinal    	11)
-		    (object InterMessView "您已是最高价" @104
+		    (object InterMessView "您已是最高价" @106
 			location   	(0, 1828)
 			font       	(object Font
 			    size       	10
@@ -2190,8 +2230,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @105
-			    Parent_View 	@104
+			label      	(object SegLabel @107
+			    Parent_View 	@106
 			    location   	(360, 1784)
 			    font       	(object Font
 				size       	10
@@ -2219,7 +2259,7 @@
 			origin     	(524, 1828)
 			terminus   	(196, 1828)
 			ordinal    	12)
-		    (object SelfMessView "校验加价步长是否正确" @106
+		    (object SelfMessView "校验加价步长是否正确" @108
 			location   	(0, 2489)
 			font       	(object Font
 			    size       	10
@@ -2230,8 +2270,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @107
-			    Parent_View 	@106
+			label      	(object SegLabel @109
+			    Parent_View 	@108
 			    location   	(631, 2445)
 			    font       	(object Font
 				size       	10
@@ -2259,7 +2299,7 @@
 			origin     	(556, 2489)
 			terminus   	(706, 2489)
 			ordinal    	17)
-		    (object InterMessView "当前加价小于加价步长，出价失败" @108
+		    (object InterMessView "当前加价小于加价步长，出价失败" @110
 			location   	(0, 2619)
 			font       	(object Font
 			    size       	10
@@ -2270,8 +2310,8 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @109
-			    Parent_View 	@108
+			label      	(object SegLabel @111
+			    Parent_View 	@110
 			    location   	(360, 2575)
 			    font       	(object Font
 				size       	10
@@ -2299,8 +2339,8 @@
 			origin     	(524, 2619)
 			terminus   	(196, 2619)
 			ordinal    	18)
-		    (object SelfMessView "依次遍历每个用户的代理出价" @110
-			location   	(0, 4372)
+		    (object SelfMessView "如果步长大于用户出价，则遍历出用户的所有代理出价" @112
+			location   	(0, 4286)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -2310,9 +2350,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @111
-			    Parent_View 	@110
-			    location   	(1020, 4387)
+			label      	(object SegLabel @113
+			    Parent_View 	@112
+			    location   	(1232, 4304)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -2325,22 +2365,22 @@
 			    quidu      	"5F8446910030"
 			    anchor_loc 	1
 			    nlines     	1
-			    max_width  	600
+			    max_width  	1025
 			    justify    	0
-			    label      	"依次遍历每个用户的代理出价"
-			    pctDist    	3.100000
-			    height     	15
+			    label      	"如果步长大于用户出价，则遍历出用户的所有代理出价"
+			    pctDist    	4.513333
+			    height     	18
 			    orientation 	1)
 			line_color 	3342489
 			client     	@11
 			supplier   	@11
 			Focus_Src  	@23
 			Focus_Entry 	@27
-			origin     	(556, 4372)
-			terminus   	(706, 4372)
+			origin     	(556, 4286)
+			terminus   	(706, 4286)
 			ordinal    	32)
-		    (object InterMessView "批量插入代理出价" @112
-			location   	(0, 4502)
+		    (object InterMessView "批量插入代理出价" @114
+			location   	(0, 4416)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -2350,9 +2390,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @113
-			    Parent_View 	@112
-			    location   	(1456, 4458)
+			label      	(object SegLabel @115
+			    Parent_View 	@114
+			    location   	(1456, 4372)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -2373,14 +2413,14 @@
 			    orientation 	0)
 			line_color 	3342489
 			client     	@11
-			supplier   	@41
+			supplier   	@44
 			Focus_Src  	@27
-			Focus_Entry 	@44
-			origin     	(555, 4502)
-			terminus   	(2357, 4502)
+			Focus_Entry 	@46
+			origin     	(555, 4416)
+			terminus   	(2357, 4416)
 			ordinal    	33)
-		    (object InterMessView "竞价成功" @114
-			location   	(0, 4607)
+		    (object InterMessView "竞价成功" @116
+			location   	(0, 5043)
 			font       	(object Font
 			    size       	10
 			    face       	"Arial"
@@ -2390,9 +2430,9 @@
 			    strike     	FALSE
 			    color      	0
 			    default_color 	TRUE)
-			label      	(object SegLabel @115
-			    Parent_View 	@114
-			    location   	(360, 4563)
+			label      	(object SegLabel @117
+			    Parent_View 	@116
+			    location   	(360, 4999)
 			    font       	(object Font
 				size       	10
 				face       	"Arial"
@@ -2416,9 +2456,209 @@
 			supplier   	@2
 			Focus_Src  	@27
 			Focus_Entry 	@10
-			origin     	(524, 4607)
-			terminus   	(196, 4607)
-			ordinal    	34)))))
+			origin     	(524, 5043)
+			terminus   	(196, 5043)
+			ordinal    	38)
+		    (object InterMessView "将本地出价录入，并标记为本地出价" @118
+			location   	(0, 4009)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @119
+			    Parent_View 	@118
+			    location   	(2372, 3965)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    quidu      	"604720E2036F"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	705
+			    justify    	0
+			    label      	"将本地出价录入，并标记为本地出价"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@42
+			supplier   	@47
+			Focus_Src  	@43
+			Focus_Entry 	@48
+			origin     	(2028, 4009)
+			terminus   	(2717, 4009)
+			ordinal    	30)
+		    (object InterMessView "将最高价的一条代理出价录入，并标记为代理出价" @120
+			location   	(0, 4521)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @121
+			    Parent_View 	@120
+			    location   	(2552, 4477)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    quidu      	"6047210D012A"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	945
+			    justify    	0
+			    label      	"将最高价的一条代理出价录入，并标记为代理出价"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@44
+			supplier   	@47
+			Focus_Src  	@46
+			Focus_Entry 	@49
+			origin     	(2388, 4521)
+			terminus   	(2717, 4521)
+			ordinal    	34)
+		    (object InterMessView "返回并跳过代理出价环节" @122
+			location   	(0, 4798)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @123
+			    Parent_View 	@122
+			    location   	(1277, 4754)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    quidu      	"6047212A00F9"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	505
+			    justify    	0
+			    label      	"返回并跳过代理出价环节"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@42
+			supplier   	@11
+			Focus_Src  	@43
+			Focus_Entry 	@29
+			origin     	(1997, 4798)
+			terminus   	(556, 4798)
+			ordinal    	36)
+		    (object InterMessView "返回" @124
+			location   	(0, 4638)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @125
+			    Parent_View 	@124
+			    location   	(1472, 4597)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    quidu      	"604721A60325"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	155
+			    justify    	0
+			    label      	"返回"
+			    pctDist    	0.491394
+			    height     	42
+			    orientation 	1)
+			line_color 	3342489
+			client     	@44
+			supplier   	@11
+			Focus_Src  	@46
+			Focus_Entry 	@28
+			origin     	(2357, 4638)
+			terminus   	(556, 4638)
+			ordinal    	35)
+		    (object SelfMessView "提交事务到数据库" @126
+			location   	(0, 4913)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @127
+			    Parent_View 	@126
+			    location   	(631, 4869)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    quidu      	"60474117039D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	395
+			    justify    	0
+			    label      	"提交事务到数据库"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@11
+			supplier   	@11
+			Focus_Src  	@27
+			Focus_Entry 	@30
+			origin     	(556, 4913)
+			terminus   	(706, 4913)
+			ordinal    	37)))))
     root_subsystem 	(object SubSystem "Component View"
 	quid       	"5F83EA0D00BF"
 	physical_models 	(list unit_reference_list)
